@@ -2,7 +2,7 @@ import random
 import game
 import sys
 
-# Author:				chrn (original by nneonneo)
+# Author:				chrn (original by nneonneo) automated logic by Dylan Toomey
 # Date:				11.11.2016
 # Description:			The logic of the AI to beat the game.
 
