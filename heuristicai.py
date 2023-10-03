@@ -12,26 +12,28 @@ moveCount = -1
 
 UP, DOWN, LEFT, RIGHT = 0, 1, 2, 3
 
-def find_best_move(board):
-    bestmove = -1    
-	
-	# TODO:
-	# Build a heuristic agent on your own that is much better than the random agent.
-	# Your own agent don't have to beat the game.
-    # bestmove = find_best_move_random_agent()
-    bestmove = make_best_move(board)
-    return bestmove
-
 def make_best_move(board):
-    moveCount = 0
+    # increment moveCount by 1
+    global moveCount
+    
     # move all the pieces to the left
-    if moveCount == 0:
-        moveCount += 1
+    if moveCount == 1:
         return LEFT
     # move all the pieces down
-    if moveCount == 1:
-        moveCount += 1
+    if moveCount == 2:
         return DOWN
+    
+    # use a heuristic function to evaluate the board state
+    scores = [get_heuristic_score(move, board) for move in [UP, DOWN, LEFT, RIGHT]]
+    # choose the move that maximizes the heuristic score
+    best_move = [UP, DOWN, LEFT, RIGHT][scores.index(max(scores))]
+    
+    # increment moveCount by 1
+    moveCount += 1
+    
+    return best_move
+
+def make_best_move(board):
     # use a heuristic function to evaluate the board state
     scores = [get_heuristic_score(move, board) for move in [UP, DOWN, LEFT, RIGHT]]
     # choose the move that maximizes the heuristic score
@@ -248,4 +250,4 @@ def board_equals(board, newboard):
     """
     Check if two boards are equal
     """
-    return  (newboard == board).all()
+    return  (newboard == board).all()  
