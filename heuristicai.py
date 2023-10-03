@@ -1,8 +1,9 @@
 import random
 import game
+import math
 import sys
 
-# Author:				chrn (original by nneonneo) automated logic by Dylan Toomey
+# Author:				chrn (original by nneonneo)
 # Date:				11.11.2016
 # Description:			The logic of the AI to beat the game.
 
@@ -21,6 +22,83 @@ def find_best_move(board):
     bestmove = make_best_move(board)
     return bestmove
 
+def make_best_move(board):
+    moveCount = 0
+    # move all the pieces to the left
+    if moveCount == 0:
+        moveCount += 1
+        return LEFT
+    # move all the pieces down
+    if moveCount == 1:
+        moveCount += 1
+        return DOWN
+    # use a heuristic function to evaluate the board state
+    scores = [get_heuristic_score(move, board) for move in [UP, DOWN, LEFT, RIGHT]]
+    # choose the move that maximizes the heuristic score
+    return [UP, DOWN, LEFT, RIGHT][scores.index(max(scores))]
+
+def sum_of_tile_values(board):
+    return sum(sum(row) for row in board)
+
+def smoothness(board):
+    smoothness = 0
+    for i in range(4):
+        for j in range(4):
+            if board[i][j] != 0:
+                value = math.log2(board[i][j])
+                # check left tile
+                if j > 0 and board[i][j-1] != 0:
+                    smoothness -= abs(value - math.log2(board[i][j-1]))
+                # check right tile
+                if j < 3 and board[i][j+1] != 0:
+                    smoothness -= abs(value - math.log2(board[i][j+1]))
+                # check top tile
+                if i > 0 and board[i-1][j] != 0:
+                    smoothness -= abs(value - math.log2(board[i-1][j]))
+                # check bottom tile
+                if i < 3 and board[i+1][j] != 0:
+                    smoothness -= abs(value - math.log2(board[i+1][j]))
+    return smoothness
+
+def get_heuristic_score(move, board):
+    new_board = execute_move(move, board)
+    return 0.1 * sum_of_tile_values(new_board) + 0.5 * smoothness(new_board) + 0.4 * monotonicity(new_board)
+
+def monotonicity(board):
+    monotonicity_left = 0
+    monotonicity_right = 0
+    monotonicity_up = 0
+    monotonicity_down = 0
+    for i in range(4):
+        for j in range(4):
+            if board[i][j] != 0:
+                # check left tiles
+                if j > 0:
+                    if board[i][j-1] == 0:
+                        monotonicity_left += math.log2(board[i][j])
+                    elif board[i][j-1] >= board[i][j]:
+                        monotonicity_left += math.log2(board[i][j]) - math.log2(board[i][j-1])
+                # check right tiles
+                if j < 3:
+                    if board[i][j+1] == 0:
+                        monotonicity_right += math.log2(board[i][j])
+                    elif board[i][j+1] >= board[i][j]:
+                        monotonicity_right += math.log2(board[i][j]) - math.log2(board[i][j+1])
+                # check top tiles
+                if i > 0:
+                    if board[i-1][j] == 0:
+                        monotonicity_up += math.log2(board[i][j])
+                    elif board[i-1][j] >= board[i][j]:
+                        monotonicity_up += math.log2(board[i][j]) - math.log2(board[i-1][j])
+                # check bottom tiles
+                if i < 3:
+                    if board[i+1][j] == 0:
+                        monotonicity_down += math.log2(board[i][j])
+                    elif board[i+1][j] >= board[i][j]:
+                        monotonicity_down += math.log2(board[i][j]) - math.log2(board[i+1][j])
+    return max(monotonicity_left, monotonicity_right, monotonicity_up, monotonicity_down)
+
+'''
 def make_best_move(board):
 
     #increment movecount by 1
@@ -77,11 +155,12 @@ def make_best_move(board):
         if bottom_full == True and top_full == False:
             return random.choice([DOWN, LEFT, RIGHT])
         #if none of the above are hit, just choose which move
-        return random.choice([DOWN, LEFT, RIGHT, UP])
+        
 
 
     # if no adjacent tiles have the same value, move randomly
     return random.choice([UP, DOWN, LEFT, RIGHT])
+    '''
 
 def check_bottom_row(board):
     for i in range(4):
@@ -169,4 +248,4 @@ def board_equals(board, newboard):
     """
     Check if two boards are equal
     """
-    return  (newboard == board).all()  
+    return  (newboard == board).all()
