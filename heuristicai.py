@@ -36,15 +36,63 @@ def make_best_move(board):
     #check to see if the bottom of the board is full of all different numbers
     bottom_full = check_bottom_row(board)
 
+    #check it first row is stacked all the way up
+    top_full = check_top_row(board)
+
     
     whichMove = check_adjacent_tiles(board)
     if whichMove != False:
+        if bottom_full == False and top_full == False:
+            
+            #choose whichmove IF which move is left or down
+            if whichMove == LEFT or whichMove == DOWN:
+                return whichMove
+            else:
+                return random.choice([DOWN, LEFT])
+            
+        if bottom_full == False and top_full == True:
+            
+
+            #choose whichmove If which move is left up or down
+            if whichMove == LEFT or whichMove == DOWN or whichMove == UP:
+                return whichMove
+            else:
+                return random.choice([DOWN, LEFT, UP])
+            
+        if bottom_full == True and top_full == False:
+
+            #choose whichmove If which move is left or down or right
+            if whichMove == LEFT or whichMove == DOWN or whichMove == RIGHT:
+                return whichMove
+            else:
+                return random.choice([DOWN, LEFT, RIGHT])
+            
+        #if none of the above are hit, just choose which move
         return whichMove
+    else:
+        if bottom_full == False and top_full == False:
+            return random.choice([DOWN, LEFT])
+        if bottom_full == False and top_full == True:
+            return random.choice([DOWN, LEFT, UP])
+        if bottom_full == True and top_full == False:
+            return random.choice([DOWN, LEFT, RIGHT])
+        #if none of the above are hit, just choose which move
+        return random.choice([DOWN, LEFT, RIGHT, UP])
+
 
     # if no adjacent tiles have the same value, move randomly
     return random.choice([UP, DOWN, LEFT, RIGHT])
 
 def check_bottom_row(board):
+    for i in range(4):
+        if board[i][3] == 0 or board[i][3] == board[3][3]:
+            return False
+        else:
+            if board[i][3] == board[i+1][3]:
+                return False
+    return True
+
+def check_top_row(board):
     for i in range(4):
         if board[3][i] == 0 or board[3][i] == board[3][3]:
             return False
