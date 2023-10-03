@@ -18,11 +18,11 @@ def make_best_move(board):
     
     # move all the pieces to the left
     if moveCount == 1:
-	moveCount += 1
+        moveCount += 1
         return LEFT
     # move all the pieces down
     if moveCount == 2:
-	moveCount += 1
+        moveCount += 1
         return DOWN
     
     # use a heuristic function to evaluate the board state
