@@ -29,13 +29,15 @@ def make_best_move(board):
     if moveCount == 1:
         return DOWN
     
-    if check_adjacent_tiles(board, 0):
-        return LEFT
+    whichMove = check_adjacent_tiles(board)
+    if whichMove != False:
+        return whichMove
+
     # if no adjacent tiles have the same value, move randomly
     return random.choice([UP, DOWN, LEFT, RIGHT])
     
     
-def check_adjacent_tiles(board, favorable):
+def check_adjacent_tiles(board):
     leftFavorable = 0
     rightFavorable = 0
     topFavorable = 0
