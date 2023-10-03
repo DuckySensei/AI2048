@@ -38,6 +38,8 @@ def make_best_move(board):
 
     
     whichMove = check_adjacent_tiles(board)
+    if whichMove != False:
+        return whichMove
 
     # if no adjacent tiles have the same value, move randomly
     return random.choice([UP, DOWN, LEFT, RIGHT])
