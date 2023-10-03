@@ -22,19 +22,34 @@ def find_best_move(board):
     return bestmove
 
 def make_best_move(board):
+
+    #increment movecount by 1
+    global moveCount
     moveCount += 1
+    
     #move all the pieces to the left
     if moveCount == 0:
         return LEFT
     if moveCount == 1:
         return DOWN
     
+    #check to see if the bottom of the board is full of all different numbers
+    bottom_full = check_bottom_row(board)
+
+    
     whichMove = check_adjacent_tiles(board)
-    if whichMove != False:
-        return whichMove
 
     # if no adjacent tiles have the same value, move randomly
     return random.choice([UP, DOWN, LEFT, RIGHT])
+
+def check_bottom_row(board):
+    for i in range(4):
+        if board[3][i] == 0 or board[3][i] == board[3][3]:
+            return False
+        else:
+            if board[3][i] == board[3][i+1]:
+                return False
+    return True
     
     
 def check_adjacent_tiles(board):
