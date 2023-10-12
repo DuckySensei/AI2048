@@ -3,7 +3,7 @@ import game
 import numpy as np
 import sys
 
-# Author:      chrn (original by nneonneo)
+# Author:      chrn (original by nneonneo) Updated to become AI by Dylan Toomey
 # Date:        11.11.2016
 # Copyright:   Algorithm from https://github.com/nneonneo/2048-ai
 # Description: The logic to beat the game. Based on expectimax algorithm.
