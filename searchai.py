@@ -3,10 +3,6 @@ import game
 import numpy as np
 import sys
 
-# Author:      chrn (original by nneonneo) Updated to become AI by Dylan Toomey
-# Date:        11.11.2016
-# Copyright:   Algorithm from https://github.com/nneonneo/2048-ai
-# Description: The logic to beat the game. Based on expectimax algorithm.
 
 UP, DOWN, LEFT, RIGHT = 0, 1, 2, 3
 
@@ -17,7 +13,7 @@ def find_best_move(board):
     bestmove = -1
     move_args = [UP, DOWN, LEFT, RIGHT]
     
-    result = [score_toplevel_move(i, board, 2) for i in range(len(move_args))]
+    result = [score_toplevel_move(i, board, 4) for i in range(len(move_args))]
     bestmove = result.index(max(result))
 
     for m in move_args:
@@ -65,12 +61,7 @@ def score_toplevel_move(move, board, depth):
             score = score_toplevel_move(move, newboard, depth-1)
             scores.append(score)
         return max(scores)
-	# Implement the Expectimax Algorithm.
-	# 1.) Start the recursion until it reach a certain depth
-	# 2.) When you don't reach the last depth, get all possible board states and 
-	#		calculate their scores dependence of the probability this will occur. (recursively)
-	# 3.) When you reach the leaf calculate the board score with your heuristic.
-
+    
 def heuristic_score(board):
     """
     Calculate the heuristic score for a board state.
@@ -97,25 +88,35 @@ def heuristic_score(board):
     score = empty_cells_score + tile_score + smoothness_score
     return score
 
+def add_random_tile(board):
+    empty_cells = list(zip(*np.where(board == 0)))
+    if empty_cells:
+        random_cell = random.choice(empty_cells)
+        board[random_cell] = 2 if random.random() < 0.9 else 4  # 90% chance of 2, 10% chance of 4
+    return board
+
 
 def execute_move(move, board):
     """
-    move and return the grid without a new random tile 
-	It won't affect the state of the game in the browser.
+    Move and return the grid with a new random tile.
     """
-
-    UP, DOWN, LEFT, RIGHT = 0, 1, 2, 3
-
+    new_board = np.copy(board)
+    
     if move == UP:
-        return game.merge_up(board)
+        new_board = game.merge_up(new_board)
     elif move == DOWN:
-        return game.merge_down(board)
+        new_board = game.merge_down(new_board)
     elif move == LEFT:
-        return game.merge_left(board)
+        new_board = game.merge_left(new_board)
     elif move == RIGHT:
-        return game.merge_right(board)
+        new_board = game.merge_right(new_board)
     else:
         sys.exit("No valid move")
+    
+    # Add a random tile after the move
+    new_board = add_random_tile(new_board)
+    
+    return new_board
         
 def board_equals(board, newboard):
     """
